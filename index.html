@@ -30,24 +30,29 @@
 
 <main class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-12">
 
-  <div class="view-switcher no-print">
-    <button class="view-btn active" onclick="switchView('tree', event)"><i class="fas fa-sitemap"></i> <span>Organigrama</span></button>
-    <button class="view-btn" onclick="switchView('map-v', event)"><i class="fas fa-project-diagram"></i> <span>Mapa Vertical</span></button>
-    <button class="view-btn" onclick="switchView('map-h', event)"><i class="fas fa-stream"></i> <span>Mapa Horizontal</span></button>
-    <button class="view-btn" onclick="switchView('workflow', event)"><i class="fas fa-route"></i> <span>Flujo</span></button>
+  <div class="top-actions no-print">
+    <div class="view-switcher">
+      <button class="view-btn active" onclick="switchView('tree', event)"><i class="fas fa-sitemap"></i> <span>Organigrama</span></button>
+      <button class="view-btn" onclick="switchView('map-v', event)"><i class="fas fa-project-diagram"></i> <span>Mapa Vertical</span></button>
+      <button class="view-btn" onclick="switchView('map-h', event)"><i class="fas fa-stream"></i> <span>Mapa Horizontal</span></button>
+      <button class="view-btn" onclick="switchView('workflow', event)"><i class="fas fa-route"></i> <span>Flujo</span></button>
+    </div>
+    <button id="dark-mode-toggle" class="control-btn dark" onclick="toggleDarkMode()">
+      <i class="fas fa-moon"></i> <span id="dark-mode-text">Modo Oscuro</span>
+    </button>
   </div>
 
   <div id="workflow-controls" style="display: none;" class="workflow-panel mb-8 no-print">
-    <h3 class="title-font text-lg sm:text-xl font-bold text-[#032A60] mb-4 uppercase tracking-wider flex items-center">
+    <h3 class="title-font text-lg sm:text-xl font-bold mb-4 uppercase tracking-wider flex items-center">
       <i class="fas fa-exchange-alt mr-2"></i>Configuración de Flujo de Información
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div>
-        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Emisor (Origen)</label>
+        <label class="block text-xs font-bold uppercase mb-2">Emisor (Origen)</label>
         <select id="emisor-select" class="workflow-select"></select>
       </div>
       <div>
-        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Receptor (Destino)</label>
+        <label class="block text-xs font-bold uppercase mb-2">Receptor (Destino)</label>
         <select id="receptor-select" class="workflow-select"></select>
       </div>
     </div>
@@ -75,7 +80,7 @@
 </main>
 
 <footer class="footer no-print">
-  <p class="title-font font-bold text-[#032A60] text-lg uppercase tracking-wider">Instituto Juventud</p>
+  <p class="title-font font-bold text-lg uppercase tracking-wider">Instituto Juventud</p>
   <p class="mt-2 text-[10px] sm:text-xs">Organigrama Institucional · Sistema de Visualización Jerárquica</p>
 </footer>
 
