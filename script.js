@@ -1,7 +1,7 @@
 let nodesMap = {};
 let nodeIdCounter = 0;
 
-// ===== DATA STRUCTURE (Hardcoded) =====
+// ===== DATA STRUCTURE (Reorganizada) =====
 const orgData = {
   title: "Dirección General",
   person: "P. José Daniel García M.U.",
@@ -13,30 +13,18 @@ const orgData = {
       person: "Lic. Andrea Hernández Rojas",
       color: "navy",
       children: [
-        {
-          title: "Direcciones Técnicas",
-          color: "yellow",
-          children: [
-            { title: "Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
-            { title: "Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
-            { title: "Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
-            { title: "Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" }
-          ]
-        },
-        {
-          title: "Coordinaciones",
-          color: "yellow",
-          children: [
-            { title: "Inglés", color: "lightblue" },
-            { title: "Psicología", color: "lightblue" },
-            { title: "Deportes", color: "lightblue" },
-            { title: "Extraescolares", color: "lightblue" },
-            { title: "Acad. Pastoral", note: "Anotación manual", color: "lightblue" },
-            { title: "Francés", color: "lightblue" },
-            { title: "Servicios Escolares", color: "lightblue" },
-            { title: "Innovación Educativa", note: "Anotación manual", color: "lightblue" }
-          ]
-        }
+        { title: "Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
+        { title: "Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
+        { title: "Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
+        { title: "Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" },
+        { title: "Inglés", color: "lightblue" },
+        { title: "Psicología", color: "lightblue" },
+        { title: "Deportes", color: "lightblue" },
+        { title: "Extraescolares", color: "lightblue" },
+        { title: "Acad. Pastoral", note: "Anotación manual", color: "lightblue" },
+        { title: "Francés", color: "lightblue" },
+        { title: "Servicios Escolares", color: "lightblue" },
+        { title: "Innovación Educativa", note: "Anotación manual", color: "lightblue" }
       ]
     },
     {
