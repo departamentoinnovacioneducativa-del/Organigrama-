@@ -1,60 +1,95 @@
 let nodesMap = {};
-let orgData = {};
 let nodeIdCounter = 0;
 
-// ===== MARKDOWN PARSER =====
-async function loadMarkdownData() {
-    try {
-        const response = await fetch('data.md');
-        if (!response.ok) throw new Error('No se pudo cargar data.md');
-        const text = await response.text();
-        
-        const lines = text.split('\n').filter(l => l.trim().startsWith('-'));
-        const root = { children: [] };
-        const stack = [{ node: root, level: -1 }];
-
-        lines.forEach(line => {
-            const match = line.match(/^(\s*)- \[(green|navy|yellow|lightblue)\] (.+)/);
-            if (!match) return;
-            
-            const indent = match[1].length;
-            const level = Math.floor(indent / 2);
-            const color = match[2];
-            const rest = match[3].split('|').map(s => s.trim());
-            
-            const title = rest[0] || 'Sin título';
-            const person = rest[1] || '';
-            const note = rest[2] || '';
-            const status = rest[3] || '';
-
-            const node = { title, person, note, status, color, children: [] };
-
-            while (stack.length > 1 && level <= stack[stack.length - 1].level) {
-                stack.pop();
-            }
-            stack[stack.length - 1].node.children.push(node);
-            stack.push({ node, level });
-        });
-        
-        return root.children[0]; // Asumimos que el primer elemento es la raíz
-    } catch (error) {
-        console.error(error);
-        document.getElementById('loading-screen').innerHTML = `<p class="text-red-600 font-bold">Error al cargar data.md.</p><p class="text-gray-600 text-sm mt-2">Asegúrate de subir el archivo data.md al mismo nivel que index.html en GitHub.</p>`;
-        return null;
+// ===== DATA STRUCTURE (Hardcoded) =====
+const orgData = {
+  title: "Dirección General",
+  person: "P. José Daniel García M.U.",
+  color: "green",
+  children: [
+    { title: "Asistente Dirección General", color: "navy" },
+    {
+      title: "Subdirección Académica",
+      person: "Lic. Andrea Hernández Rojas",
+      color: "navy",
+      children: [
+        {
+          title: "Direcciones Técnicas",
+          color: "yellow",
+          children: [
+            { title: "Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
+            { title: "Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
+            { title: "Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
+            { title: "Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Coordinaciones",
+          color: "yellow",
+          children: [
+            { title: "Inglés", color: "lightblue" },
+            { title: "Psicología", color: "lightblue" },
+            { title: "Deportes", color: "lightblue" },
+            { title: "Extraescolares", color: "lightblue" },
+            { title: "Acad. Pastoral", note: "Anotación manual", color: "lightblue" },
+            { title: "Francés", color: "lightblue" },
+            { title: "Servicios Escolares", color: "lightblue" },
+            { title: "Innovación Educativa", note: "Anotación manual", color: "lightblue" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "Área Jurídica",
+      person: "Lic. Iván Vázquez",
+      color: "navy",
+      children: [
+        { title: "Contratos", status: "NO", color: "lightblue" },
+        { title: "Seguridad", status: "NO", color: "lightblue" }
+      ]
+    },
+    {
+      title: "Comunicación y Marketing",
+      person: "Lic. Ma. Teresa Romero",
+      color: "navy",
+      children: [
+        { title: "Admisiones", color: "lightblue" },
+        { title: "Marketing MFRs", color: "lightblue" },
+        { title: "Redes Sociales", person: "Miss Jimena González, Prof. David Aguirre", color: "lightblue" }
+      ]
+    },
+    {
+      title: "Subdirección Administrativa",
+      person: "C.P. Teresa de Jesús Feria Reyna",
+      color: "navy",
+      children: [
+        {
+          title: "Servicios Generales",
+          person: "Juan Ruiz",
+          color: "yellow",
+          children: [
+            { title: "Mantenimiento", color: "lightblue" },
+            { title: "Limpieza", color: "lightblue" },
+            { title: "Jardinería", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Compras",
+          person: "Lic. Ma. Elena Ibarra",
+          color: "yellow",
+          children: [
+            { title: "Proveedores", status: "NO", color: "lightblue" }
+          ]
+        },
+        { title: "Recursos Humanos", color: "lightblue" },
+        { title: "Control Interno", color: "lightblue" },
+        { title: "Relaciones Públicas", person: "Lic. Rosario Gonzaga", color: "lightblue" },
+        { title: "Sistemas", person: "Ing. Alfredo Vázquez, Ing. Antonio Silva", color: "lightblue" },
+        { title: "Cajas", person: "Miss Krishna Cuadros, Miss Margarita Hernández", color: "lightblue" }
+      ]
     }
-}
-
-// ===== INIT =====
-async function init() {
-    orgData = await loadMarkdownData();
-    if (!orgData) return;
-
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('app-content').style.display = 'block';
-    
-    assignIds(orgData);
-    document.getElementById('view-container').innerHTML = renderTree(orgData, true);
-}
+  ]
+};
 
 // ===== ASSIGN IDS & BUILD MAP =====
 function assignIds(node, parent = null) {
@@ -245,5 +280,6 @@ function collapseAll() {
     if (root) root.querySelectorAll('.node-item').forEach(i => { if(!i.classList.contains('root-node')) i.classList.add('collapsed'); });
 }
 
-// Iniciar la aplicación
-init();
+// ===== INITIALIZATION =====
+assignIds(orgData);
+document.getElementById('view-container').innerHTML = renderTree(orgData, true);
