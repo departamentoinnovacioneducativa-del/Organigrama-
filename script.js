@@ -1,7 +1,7 @@
 let nodesMap = {};
 let nodeIdCounter = 0;
 
-// ===== DATA STRUCTURE (Actualizada y limpia) =====
+// ===== DATA STRUCTURE (Actualizada) =====
 const orgData = {
   title: "Dirección General",
   person: "P. José Daniel García M.U.",
@@ -21,17 +21,16 @@ const orgData = {
         { title: "Coordinación de Psicología", color: "lightblue" },
         { title: "Coordinación de Deportes", color: "lightblue" },
         { title: "Coordinación de Extraescolares", color: "lightblue" },
-        { title: "Acad. Pastoral", note: "Anotación manual", color: "lightblue" },
+        { title: "Acad. Pastoral", color: "lightblue" }, // Sin nota
         { title: "Coordinación de Francés", color: "lightblue" },
         { title: "Coordinación de Servicios Escolares", color: "lightblue" },
-        { title: "Coordinación de Innovación Educativa", note: "Anotación manual", color: "lightblue" }
+        { title: "Coordinación de Innovación Educativa", color: "lightblue" } // Sin nota
       ]
     },
     {
       title: "Área Jurídica",
       person: "Lic. Iván Vázquez",
       color: "navy"
-      // Contratos y Seguridad eliminados
     },
     {
       title: "Comunicación y Marketing",
@@ -62,13 +61,17 @@ const orgData = {
           title: "Compras",
           person: "Lic. Ma. Elena Ibarra",
           color: "yellow"
-          // Proveedores eliminado
         },
         { title: "Recursos Humanos", color: "lightblue" },
-        { title: "Control Interno", color: "lightblue" },
-        { title: "Relaciones Públicas", person: "Lic. Rosario Gonzaga", color: "lightblue" },
-        { title: "Sistemas", person: "Ing. Alfredo Vázquez, Ing. Antonio Silva", color: "lightblue" },
-        { title: "Cajas", person: "Miss Krishna Cuadros, Miss Margarita Hernández", color: "lightblue" }
+        {
+          title: "Control Interno", // Ahora es nodo superior (amarillo)
+          color: "yellow",
+          children: [
+            { title: "Relaciones Públicas", person: "Lic. Rosario Gonzaga", color: "lightblue" },
+            { title: "Sistemas", person: "Ing. Alfredo Vázquez, Ing. Antonio Silva", color: "lightblue" },
+            { title: "Cajas", person: "Miss Krishna Cuadros, Miss Margarita Hernández", color: "lightblue" }
+          ]
+        }
       ]
     }
   ]
@@ -93,7 +96,6 @@ function renderTree(node, isRoot = false) {
     html += hasChildren ? `<div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>` : `<div class="leaf-icon"><i class="fas fa-circle"></i></div>`;
     html += `<div class="node-content"><div class="node-title">${node.title}</div>`;
     if (node.person) html += `<div class="node-person">${node.person}</div>`;
-    if (node.note) html += `<div class="node-badge"><i class="fas fa-pen"></i> ${node.note}</div>`;
     html += `</div></div>`;
     
     if (hasChildren) {
@@ -111,7 +113,6 @@ function renderMap(node, orientation = 'vertical') {
     html += `<div class="map-card node-${node.color}" data-id="${node.id}">`;
     html += `<div class="map-card-title">${node.title}</div>`;
     if (node.person) html += `<div class="map-card-person">${node.person}</div>`;
-    if (node.note) html += `<div class="map-card-person" style="opacity:0.7; font-size:9px;"><i class="fas fa-pen"></i> ${node.note}</div>`;
     html += `</div>`;
     
     if (hasChildren) {
@@ -162,7 +163,6 @@ function populateDropdowns() {
     receptorSel.innerHTML = '';
     
     Object.values(nodesMap).forEach(node => {
-        // Excluir la raíz de las opciones de flujo
         if (node.id === 0) return; 
         
         const opt1 = document.createElement('option');
@@ -178,10 +178,9 @@ function populateDropdowns() {
         receptorSel.appendChild(opt2);
     });
     
-    // Seleccionar valores por defecto para mostrar un ejemplo
     if(emisorSel.options.length > 1) {
-        emisorSel.selectedIndex = 0; // Subdirección Académica
-        receptorSel.selectedIndex = 5; // Coordinación de Psicología
+        emisorSel.selectedIndex = 0;
+        receptorSel.selectedIndex = 5;
     }
 }
 
@@ -213,13 +212,11 @@ function calculatePath() {
         return;
     }
     
-    // Buscar Ancestro Común Más Bajo (LCA)
     const pathStart = getAncestors(startId);
     const pathEnd = getAncestors(endId);
     const setEnd = new Set(pathEnd);
     const lcaId = pathStart.find(id => setEnd.has(id));
     
-    // Construir ruta directa sin nodos vacíos intermedios
     const route = [];
     for (let id of pathStart) {
         route.push(id);
@@ -233,7 +230,6 @@ function calculatePath() {
     downPath.reverse();
     route.push(...downPath);
     
-    // Iluminar ruta
     route.forEach((id, index) => {
         const el = document.querySelector(`.map-card[data-id="${id}"]`);
         if (el) {
@@ -248,7 +244,6 @@ function calculatePath() {
         }
     });
     
-    // Generar resumen
     const instances = route.length;
     const steps = instances - 1;
     let routeHtml = route.map((id, i) => {
