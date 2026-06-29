@@ -30,54 +30,48 @@
 
 <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
 
-  <div id="loading-screen" class="text-center py-20 text-gray-500">
-    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
-    <p>Cargando estructura desde data.md...</p>
+  <div class="view-switcher no-print">
+    <button class="view-btn active" onclick="switchView('tree', event)"><i class="fas fa-sitemap"></i> Organigrama</button>
+    <button class="view-btn" onclick="switchView('map-v', event)"><i class="fas fa-project-diagram"></i> Mapa Vertical</button>
+    <button class="view-btn" onclick="switchView('map-h', event)"><i class="fas fa-stream"></i> Mapa Horizontal</button>
+    <button class="view-btn" onclick="switchView('workflow', event)"><i class="fas fa-route"></i> Flujo de Trabajo</button>
   </div>
 
-  <div id="app-content" style="display: none;">
-    <div class="view-switcher no-print">
-      <button class="view-btn active" onclick="switchView('tree', event)"><i class="fas fa-sitemap"></i> Organigrama</button>
-      <button class="view-btn" onclick="switchView('map-v', event)"><i class="fas fa-project-diagram"></i> Mapa Vertical</button>
-      <button class="view-btn" onclick="switchView('map-h', event)"><i class="fas fa-stream"></i> Mapa Horizontal</button>
-      <button class="view-btn" onclick="switchView('workflow', event)"><i class="fas fa-route"></i> Flujo de Trabajo</button>
-    </div>
-
-    <div id="workflow-controls" style="display: none;" class="workflow-panel mb-8 no-print">
-      <h3 class="title-font text-xl font-bold text-[#032A60] mb-4 uppercase tracking-wider">
-        <i class="fas fa-exchange-alt mr-2"></i>Configuración de Flujo de Información
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Emisor (Origen)</label>
-          <select id="emisor-select" class="workflow-select"></select>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Receptor (Destino)</label>
-          <select id="receptor-select" class="workflow-select"></select>
-        </div>
+  <div id="workflow-controls" style="display: none;" class="workflow-panel mb-8 no-print">
+    <h3 class="title-font text-xl font-bold text-[#032A60] mb-4 uppercase tracking-wider">
+      <i class="fas fa-exchange-alt mr-2"></i>Configuración de Flujo de Información
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Emisor (Origen)</label>
+        <select id="emisor-select" class="workflow-select"></select>
       </div>
-      <button class="control-btn green w-full md:w-auto" onclick="calculatePath()">
-        <i class="fas fa-magic"></i> Trazar Ruta y Mostrar Pasos
-      </button>
-      <div id="workflow-summary" class="workflow-summary"></div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Receptor (Destino)</label>
+        <select id="receptor-select" class="workflow-select"></select>
+      </div>
     </div>
-
-    <div id="controls-bar" class="controls no-print">
-      <button class="control-btn green" onclick="expandAll()"><i class="fas fa-expand-arrows-alt"></i> Expandir Todo</button>
-      <button class="control-btn" onclick="collapseAll()"><i class="fas fa-compress-arrows-alt"></i> Contraer Todo</button>
-      <button class="control-btn yellow" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
-    </div>
-
-    <div id="view-container" class="org-tree"></div>
-
-    <div class="legend no-print">
-      <div class="legend-item"><div class="legend-color" style="background: #009944;"></div><span>Dirección General</span></div>
-      <div class="legend-item"><div class="legend-color" style="background: #032A60;"></div><span>Subdirecciones</span></div>
-      <div class="legend-item"><div class="legend-color" style="background: #FFD100;"></div><span>Departamentos</span></div>
-      <div class="legend-item"><div class="legend-color" style="background: #00A8FF;"></div><span>Coordinaciones</span></div>
-    </div>
+    <button class="control-btn green w-full md:w-auto" onclick="calculatePath()">
+      <i class="fas fa-magic"></i> Trazar Ruta y Mostrar Pasos
+    </button>
+    <div id="workflow-summary" class="workflow-summary"></div>
   </div>
+
+  <div id="controls-bar" class="controls no-print">
+    <button class="control-btn green" onclick="expandAll()"><i class="fas fa-expand-arrows-alt"></i> Expandir Todo</button>
+    <button class="control-btn" onclick="collapseAll()"><i class="fas fa-compress-arrows-alt"></i> Contraer Todo</button>
+    <button class="control-btn yellow" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+  </div>
+
+  <div id="view-container" class="org-tree"></div>
+
+  <div class="legend no-print">
+    <div class="legend-item"><div class="legend-color" style="background: #009944;"></div><span>Dirección General</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #032A60;"></div><span>Subdirecciones</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #FFD100;"></div><span>Departamentos</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #00A8FF;"></div><span>Coordinaciones</span></div>
+  </div>
+
 </main>
 
 <footer class="footer no-print">
