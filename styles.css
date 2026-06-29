@@ -162,11 +162,6 @@ body {
 .path-number { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; background: var(--navy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border: 2px solid white; z-index: 10; }
 
 /* ===== STATS & LEGEND ===== */
-.stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 14px; margin-bottom: 28px; border: 1px solid #e2e8f0; }
-.stat-item { text-align: center; padding: 8px 12px; border-right: 1px solid #e2e8f0; }
-.stat-item:last-child { border-right: none; }
-.stat-value { font-family: 'Oswald', sans-serif; font-size: 36px; font-weight: 700; color: var(--navy); line-height: 1; }
-.stat-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 6px; }
 .legend { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; padding: 20px 24px; background: #f8fafc; border-radius: 12px; margin-top: 40px; border: 1px solid #e2e8f0; }
 .legend-item { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--navy); }
 .legend-color { width: 22px; height: 22px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -182,7 +177,6 @@ body {
   body { background: white; }
   .no-print { display: none !important; }
   
-  /* Forzar colores y cajas */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -198,7 +192,6 @@ body {
     height: auto !important;
   }
   
-  /* Expandir todo al imprimir */
   .node-item.collapsed > .children-list {
     grid-template-rows: 1fr !important;
   }
@@ -208,7 +201,6 @@ body {
     break-inside: avoid;
   }
   
-  /* Escalar mapas horizontales para que quepan */
   .map-horizontal {
     transform: scale(0.85);
     transform-origin: top left;
