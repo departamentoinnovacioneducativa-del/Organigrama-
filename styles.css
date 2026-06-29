@@ -3,7 +3,7 @@
   --yellow: #FFD100;
   --navy: #032A60;
   --light-blue: #00A8FF;
-  --line: #cbd5e1;
+  --line: #64748b; /* Líneas más oscuras para mejor visibilidad */
 }
 
 * { box-sizing: border-box; }
@@ -115,9 +115,6 @@ body {
 .node-person { font-size: 11px; opacity: 0.92; margin-top: 4px; font-weight: 500; }
 @media (min-width: 640px) { .node-person { font-size: 12px; } }
 .node-yellow .node-person { color: var(--navy); opacity: 0.72; }
-.node-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; padding: 3px 8px; border-radius: 12px; background: rgba(255,255,255,0.22); margin-top: 6px; font-weight: 700; text-transform: uppercase; }
-@media (min-width: 640px) { .node-badge { font-size: 10px; padding: 3px 9px; } }
-.node-yellow .node-badge { background: rgba(3, 42, 96, 0.14); }
 
 .children-list {
   display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.4s ease; margin-left: 8px; padding-left: 22px; position: relative;
@@ -142,7 +139,7 @@ body {
 .map-container {
   overflow: auto; padding: 20px 10px; border: 1px solid #e5e7eb; border-radius: 16px; background: #f8fafc;
   min-height: 50vh; position: relative; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px;
-  -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+  -webkit-overflow-scrolling: touch; 
 }
 @media (min-width: 768px) { .map-container { padding: 40px 20px; min-height: 60vh; } }
 
@@ -163,6 +160,7 @@ body {
 .map-card-person { font-size: 10px; margin-top: 4px; opacity: 0.9; }
 @media (min-width: 768px) { .map-card-person { font-size: 11px; } }
 
+/* Líneas conectoras de los mapas (ahora más visibles) */
 .map-vertical .map-node-wrapper::before { content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 12px; background: var(--line); z-index: 1; }
 @media (min-width: 768px) { .map-vertical .map-node-wrapper::before { height: 20px; } }
 .map-vertical .map-node-wrapper:first-child::before { display: none; }
@@ -200,7 +198,7 @@ body {
 
 /* ===== PRINT (Hoja Tamaño Carta / Letter) ===== */
 @page {
-  size: letter landscape; /* Tamaño carta horizontal */
+  size: letter landscape; 
   margin: 8mm;
 }
 
@@ -213,7 +211,8 @@ body {
     print-color-adjust: exact !important;
   }
   
-  .map-container {
+  /* Asegurar que el contenedor ocupe todo el espacio sin scroll */
+  .map-container, .org-tree {
     overflow: visible !important;
     border: none !important;
     background: white !important;
@@ -224,9 +223,9 @@ body {
     display: block !important;
   }
   
-  /* Escalar mapas para que quepan en una sola hoja carta */
+  /* Escalar mapas para que quepan en la hoja */
   .map-vertical {
-    zoom: 0.75; /* Funciona en Chrome/Edge */
+    zoom: 0.75; 
     margin: 0 auto;
     padding: 0 !important;
   }
@@ -238,10 +237,7 @@ body {
     padding: 0 !important;
   }
   
-  .org-tree {
-    padding: 0 !important;
-  }
-
+  /* Expandir automáticamente el organigrama tipo árbol al imprimir */
   .node-item.collapsed > .children-list {
     grid-template-rows: 1fr !important;
   }
