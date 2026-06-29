@@ -1,7 +1,7 @@
 let nodesMap = {};
 let nodeIdCounter = 0;
 
-// ===== DATA STRUCTURE (Reorganizada) =====
+// ===== DATA STRUCTURE (Actualizada y limpia) =====
 const orgData = {
   title: "Dirección General",
   person: "P. José Daniel García M.U.",
@@ -13,28 +13,25 @@ const orgData = {
       person: "Lic. Andrea Hernández Rojas",
       color: "navy",
       children: [
-        { title: "Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
-        { title: "Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
-        { title: "Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
-        { title: "Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" },
-        { title: "Inglés", color: "lightblue" },
-        { title: "Psicología", color: "lightblue" },
-        { title: "Deportes", color: "lightblue" },
-        { title: "Extraescolares", color: "lightblue" },
+        { title: "Dirección de Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
+        { title: "Dirección de Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
+        { title: "Dirección de Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
+        { title: "Dirección de Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" },
+        { title: "Coordinación de Inglés", color: "lightblue" },
+        { title: "Coordinación de Psicología", color: "lightblue" },
+        { title: "Coordinación de Deportes", color: "lightblue" },
+        { title: "Coordinación de Extraescolares", color: "lightblue" },
         { title: "Acad. Pastoral", note: "Anotación manual", color: "lightblue" },
-        { title: "Francés", color: "lightblue" },
-        { title: "Servicios Escolares", color: "lightblue" },
-        { title: "Innovación Educativa", note: "Anotación manual", color: "lightblue" }
+        { title: "Coordinación de Francés", color: "lightblue" },
+        { title: "Coordinación de Servicios Escolares", color: "lightblue" },
+        { title: "Coordinación de Innovación Educativa", note: "Anotación manual", color: "lightblue" }
       ]
     },
     {
       title: "Área Jurídica",
       person: "Lic. Iván Vázquez",
-      color: "navy",
-      children: [
-        { title: "Contratos", status: "NO", color: "lightblue" },
-        { title: "Seguridad", status: "NO", color: "lightblue" }
-      ]
+      color: "navy"
+      // Contratos y Seguridad eliminados
     },
     {
       title: "Comunicación y Marketing",
@@ -64,10 +61,8 @@ const orgData = {
         {
           title: "Compras",
           person: "Lic. Ma. Elena Ibarra",
-          color: "yellow",
-          children: [
-            { title: "Proveedores", status: "NO", color: "lightblue" }
-          ]
+          color: "yellow"
+          // Proveedores eliminado
         },
         { title: "Recursos Humanos", color: "lightblue" },
         { title: "Control Interno", color: "lightblue" },
@@ -96,10 +91,9 @@ function renderTree(node, isRoot = false) {
     const click = hasChildren ? ' onclick="toggleNode(this)"' : '';
     html += `<div class="node-card node-${node.color} ${hasChildren ? 'has-children' : ''}"${click}>`;
     html += hasChildren ? `<div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>` : `<div class="leaf-icon"><i class="fas fa-circle"></i></div>`;
-    html += `<div class="node-content"><div class="node-title ${node.status === 'NO' ? 'strikethrough' : ''}">${node.title}</div>`;
+    html += `<div class="node-content"><div class="node-title">${node.title}</div>`;
     if (node.person) html += `<div class="node-person">${node.person}</div>`;
     if (node.note) html += `<div class="node-badge"><i class="fas fa-pen"></i> ${node.note}</div>`;
-    if (node.status === 'NO') html += `<div class="node-no"><i class="fas fa-times-circle"></i> NO</div>`;
     html += `</div></div>`;
     
     if (hasChildren) {
@@ -115,9 +109,9 @@ function renderMap(node, orientation = 'vertical') {
     const hasChildren = node.children && node.children.length > 0;
     let html = `<div class="map-node-wrapper">`;
     html += `<div class="map-card node-${node.color}" data-id="${node.id}">`;
-    html += `<div class="map-card-title ${node.status === 'NO' ? 'strikethrough' : ''}">${node.title}</div>`;
+    html += `<div class="map-card-title">${node.title}</div>`;
     if (node.person) html += `<div class="map-card-person">${node.person}</div>`;
-    if (node.status === 'NO') html += `<div style="font-size:9px; font-weight:800; color:#dc2626; margin-top:4px;">NO</div>`;
+    if (node.note) html += `<div class="map-card-person" style="opacity:0.7; font-size:9px;"><i class="fas fa-pen"></i> ${node.note}</div>`;
     html += `</div>`;
     
     if (hasChildren) {
@@ -168,15 +162,27 @@ function populateDropdowns() {
     receptorSel.innerHTML = '';
     
     Object.values(nodesMap).forEach(node => {
-        if (node.title === "Dirección General") return;
+        // Excluir la raíz de las opciones de flujo
+        if (node.id === 0) return; 
+        
         const opt1 = document.createElement('option');
         opt1.value = node.id;
-        opt1.textContent = node.title + (node.person ? ` (${node.person.split(',')[0]})` : '');
+        let text = node.title;
+        if (node.person) {
+            text += ` (${node.person.split(',')[0]})`;
+        }
+        opt1.textContent = text;
         emisorSel.appendChild(opt1);
         
         const opt2 = opt1.cloneNode(true);
         receptorSel.appendChild(opt2);
     });
+    
+    // Seleccionar valores por defecto para mostrar un ejemplo
+    if(emisorSel.options.length > 1) {
+        emisorSel.selectedIndex = 0; // Subdirección Académica
+        receptorSel.selectedIndex = 5; // Coordinación de Psicología
+    }
 }
 
 function getAncestors(id) {
@@ -199,17 +205,21 @@ function calculatePath() {
         if (num) num.remove();
     });
     
+    const summaryDiv = document.getElementById('workflow-summary');
+    
     if (startId === endId) {
-        document.getElementById('workflow-summary').style.display = 'block';
-        document.getElementById('workflow-summary').innerHTML = `<p class="font-bold text-red-600">El emisor y el receptor son la misma área.</p>`;
+        summaryDiv.style.display = 'block';
+        summaryDiv.innerHTML = `<p class="font-bold text-red-600">El emisor y el receptor son la misma área.</p>`;
         return;
     }
     
+    // Buscar Ancestro Común Más Bajo (LCA)
     const pathStart = getAncestors(startId);
     const pathEnd = getAncestors(endId);
     const setEnd = new Set(pathEnd);
     const lcaId = pathStart.find(id => setEnd.has(id));
     
+    // Construir ruta directa sin nodos vacíos intermedios
     const route = [];
     for (let id of pathStart) {
         route.push(id);
@@ -223,6 +233,7 @@ function calculatePath() {
     downPath.reverse();
     route.push(...downPath);
     
+    // Iluminar ruta
     route.forEach((id, index) => {
         const el = document.querySelector(`.map-card[data-id="${id}"]`);
         if (el) {
@@ -237,6 +248,7 @@ function calculatePath() {
         }
     });
     
+    // Generar resumen
     const instances = route.length;
     const steps = instances - 1;
     let routeHtml = route.map((id, i) => {
@@ -247,12 +259,12 @@ function calculatePath() {
         return `<div class="path-step">${i+1}. ${label}</div>${i < route.length-1 ? '<i class="fas fa-arrow-right path-arrow"></i>' : ''}`;
     }).join('');
     
-    document.getElementById('workflow-summary').style.display = 'block';
-    document.getElementById('workflow-summary').innerHTML = `
-        <h4 class="title-font font-bold text-[#032A60] uppercase text-lg mb-2">Ruta de Información Calculada</h4>
+    summaryDiv.style.display = 'block';
+    summaryDiv.innerHTML = `
+        <h4 class="title-font font-bold text-[#032A60] uppercase text-base sm:text-lg mb-2">Ruta de Información Calculada</h4>
         <div class="flex flex-wrap gap-2 mb-4">
             <span class="path-step" style="background:#009944; color:white;">Instancias: ${instances}</span>
-            <span class="path-step" style="background:#032A60; color:white;">Pasos (Conexiones): ${steps}</span>
+            <span class="path-step" style="background:#032A60; color:white;">Pasos: ${steps}</span>
         </div>
         <div class="flex flex-wrap items-center mt-2 border-t pt-4">
             ${routeHtml}
