@@ -21,10 +21,10 @@ const orgData = {
         { title: "Coordinación de Psicología", color: "lightblue" },
         { title: "Coordinación de Deportes", color: "lightblue" },
         { title: "Coordinación de Extraescolares", color: "lightblue" },
-        { title: "Acad. Pastoral", color: "lightblue" }, // Sin nota
+        { title: "Acad. Pastoral", color: "lightblue" }, 
         { title: "Coordinación de Francés", color: "lightblue" },
         { title: "Coordinación de Servicios Escolares", color: "lightblue" },
-        { title: "Coordinación de Innovación Educativa", color: "lightblue" } // Sin nota
+        { title: "Coordinación de Innovación Educativa", color: "lightblue" } 
       ]
     },
     {
@@ -96,7 +96,7 @@ function renderTree(node, isRoot = false) {
     html += hasChildren ? `<div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>` : `<div class="leaf-icon"><i class="fas fa-circle"></i></div>`;
     html += `<div class="node-content"><div class="node-title">${node.title}</div>`;
     if (node.person) html += `<div class="node-person">${node.person}</div>`;
-    html += `</div></div>`;
+    html += `</div></div>`; // Notas eliminadas completamente
     
     if (hasChildren) {
         html += `<div class="children-list"><div class="children-list-inner">`;
@@ -256,7 +256,7 @@ function calculatePath() {
     
     summaryDiv.style.display = 'block';
     summaryDiv.innerHTML = `
-        <h4 class="title-font font-bold text-[#032A60] uppercase text-base sm:text-lg mb-2">Ruta de Información Calculada</h4>
+        <h4 class="title-font font-bold uppercase text-base sm:text-lg mb-2">Ruta de Información Calculada</h4>
         <div class="flex flex-wrap gap-2 mb-4">
             <span class="path-step" style="background:#009944; color:white;">Instancias: ${instances}</span>
             <span class="path-step" style="background:#032A60; color:white;">Pasos: ${steps}</span>
@@ -275,6 +275,38 @@ function collapseAll() {
     if (root) root.querySelectorAll('.node-item').forEach(i => { if(!i.classList.contains('root-node')) i.classList.add('collapsed'); });
 }
 
+// ===== DARK MODE =====
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const icon = document.querySelector('#dark-mode-toggle i');
+    const text = document.getElementById('dark-mode-text');
+    
+    if (isDarkMode) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+        if(text) text.textContent = 'Modo Claro';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+        if(text) text.textContent = 'Modo Oscuro';
+        localStorage.setItem('theme', 'light');
+    }
+}
+
 // ===== INITIALIZATION =====
+// Apply saved theme before rendering
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    // Update button icon if exists
+    document.addEventListener('DOMContentLoaded', () => {
+        const icon = document.querySelector('#dark-mode-toggle i');
+        const text = document.getElementById('dark-mode-text');
+        if(icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+        if(text) text.textContent = 'Modo Claro';
+    });
+}
+
 assignIds(orgData);
 document.getElementById('view-container').innerHTML = renderTree(orgData, true);
