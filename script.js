@@ -4,72 +4,105 @@ let nodeIdCounter = 0;
 // ===== DATA STRUCTURE (Actualizada) =====
 const orgData = {
   title: "Dirección General",
-  person: "P. José Daniel García M.U.",
+  person: "P. José Daniel García",
   color: "green",
   children: [
-    { title: "Asistente Dirección General", color: "navy" },
+    { 
+      title: "Asistente de Dirección General", 
+      person: "Sara Hernández", 
+      color: "navy" 
+    },
     {
       title: "Subdirección Académica",
-      person: "Lic. Andrea Hernández Rojas",
+      person: "Andrea Hernández",
       color: "navy",
       children: [
-        { title: "Dirección de Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
-        { title: "Dirección de Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
-        { title: "Dirección de Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
-        { title: "Dirección de Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" },
-        { title: "Coordinación de Inglés", color: "lightblue" },
-        { title: "Coordinación de Psicología", color: "lightblue" },
-        { title: "Coordinación de Deportes", color: "lightblue" },
-        { title: "Coordinación de Extraescolares", color: "lightblue" },
-        { title: "Acad. Pastoral", color: "lightblue" }, 
-        { title: "Coordinación de Francés", color: "lightblue" },
-        { title: "Coordinación de Servicios Escolares", color: "lightblue" },
-        { title: "Coordinación de Innovación Educativa", color: "lightblue" } 
+        {
+          title: "Direcciones Técnicas",
+          color: "yellow",
+          children: [
+            { title: "Preescolar", color: "lightblue" },
+            { title: "Primaria", color: "lightblue" },
+            { title: "Secundaria", color: "lightblue" },
+            { title: "Preparatoria", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Coordinaciones Institucionales",
+          color: "yellow",
+          children: [
+            { title: "Inglés", color: "lightblue" },
+            { title: "Psicología", color: "lightblue" },
+            { title: "Educación Física", color: "lightblue" },
+            { title: "Extraescolares", color: "lightblue" },
+            { title: "Pastoral", color: "lightblue" },
+            { title: "Francés", color: "lightblue" }
+          ]
+        },
+        { title: "Innovación Educativa", person: "P. Adrian Rivera Juvenal", color: "lightblue" },
+        { title: "Servicios Escolares", person: "Elizabeth Oceguera Palacios", color: "lightblue" }
       ]
     },
     {
       title: "Área Jurídica",
-      person: "Lic. Iván Vázquez",
-      color: "navy"
+      person: "Iván Vázquez",
+      color: "navy",
+      children: [
+        { title: "Seguridad", person: "Julio César Jiménez Romero", color: "lightblue" }
+      ]
     },
     {
-      title: "Comunicación y Marketing",
-      person: "Lic. Ma. Teresa Romero",
+      title: "Comunicación y Marketing Institucional",
+      person: "María Teresa Romero",
       color: "navy",
       children: [
         { title: "Admisiones", color: "lightblue" },
-        { title: "Marketing MFRs", color: "lightblue" },
-        { title: "Redes Sociales", person: "Miss Jimena González, Prof. David Aguirre", color: "lightblue" }
+        { title: "Marketing MFRS", color: "lightblue" },
+        { title: "Redes Sociales", person: "Jimena González Jiménez y Omar David Aguirre Plata", color: "lightblue" }
       ]
     },
     {
       title: "Subdirección Administrativa",
-      person: "C.P. Teresa de Jesús Feria Reyna",
+      person: "Teresa de Jesús Feria",
       color: "navy",
       children: [
         {
           title: "Servicios Generales",
-          person: "Juan Ruiz",
+          person: "Juan Ruiz López",
           color: "yellow",
           children: [
-            { title: "Mantenimiento", color: "lightblue" },
-            { title: "Limpieza", color: "lightblue" },
-            { title: "Jardinería", color: "lightblue" }
+            { title: "Mantenimiento y Limpieza", person: "Paseo: Adrián Galindo Pascual / Sn Agustin: José Manuel Bernal Reyes", color: "lightblue" },
+            { title: "Jardinería", person: "Andrés Marcelino Rodriguez Martinez", color: "lightblue" }
           ]
         },
         {
           title: "Compras",
-          person: "Lic. Ma. Elena Ibarra",
-          color: "yellow"
-        },
-        { title: "Recursos Humanos", color: "lightblue" },
-        {
-          title: "Control Interno", // Ahora es nodo superior (amarillo)
+          person: "Maria Elena Ibarra Alvarez",
           color: "yellow",
           children: [
-            { title: "Relaciones Públicas", person: "Lic. Rosario Gonzaga", color: "lightblue" },
-            { title: "Sistemas", person: "Ing. Alfredo Vázquez, Ing. Antonio Silva", color: "lightblue" },
-            { title: "Cajas", person: "Miss Krishna Cuadros, Miss Margarita Hernández", color: "lightblue" }
+            { title: "Atención a pedidos", person: "Juan Ruiz López", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Recursos Humanos",
+          color: "yellow",
+          children: [
+            { title: "Relaciones Públicas", person: "Maria del Rosario Gonzaga Vera", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Control Interno",
+          color: "yellow",
+          children: [
+            { title: "Sistemas", person: "Alfredo Vázquez y Antonio Silva", color: "lightblue" }
+          ]
+        },
+        {
+          title: "Tesorería",
+          person: "Maria del Socorro Hdez y Esparza",
+          color: "yellow",
+          children: [
+            { title: "Cajas", person: "Krishna Cuadros, Margarita Hernández e Irene A. Ramirez M.", color: "lightblue" }
           ]
         }
       ]
