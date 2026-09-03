@@ -1,82 +1,76 @@
 // ===== CONFIGURACIÓN CLOUDFLARE KV & ESTADO =====
-const CLOUDFLARE_API_URL = "https://org-lad-api.adrian-camelot32.workers.dev/api/org"; // Estamos usando tu mismo Worker del proyecto anterior
+const CLOUDFLARE_API_URL = ""; // Vacío temporalmente para no cruzar datos con el otro proyecto
 let isAdmin = false;
 
 let nodesMap = {};
 let nodeIdCounter = 0;
 
-// DATOS POR DEFECTO (Estructura Instituto Juventud)
+// DATOS POR DEFECTO (Estructura exacta del Instituto Juventud)
 const DEFAULT_ORG_DATA = {
   title: "Dirección General",
-  person: "P. José Daniel García",
+  person: "P. José Daniel García M.U.",
   color: "green",
   children: [
-    { title: "Asistente de Dirección General", person: "Sara Hernández", color: "navy" },
+    { title: "Asistente Dirección General", color: "navy" },
     {
-      title: "Subdirección Académica", person: "Andrea Hernández", color: "navy",
+      title: "Subdirección Académica", person: "Lic. Andrea Hernández Rojas", color: "navy",
       children: [
         {
           title: "Direcciones Técnicas", color: "yellow",
           children: [
-            { title: "Preescolar", color: "lightblue" },
-            { title: "Primaria", color: "lightblue" },
-            { title: "Secundaria", color: "lightblue" },
-            { title: "Preparatoria", color: "lightblue" }
+            { title: "Preescolar", person: "Lic. Ericka Romero", color: "lightblue" },
+            { title: "Primaria", person: "Mtra. Laura Romero", color: "lightblue" },
+            { title: "Secundaria", person: "Mtra. Dulce Cano", color: "lightblue" },
+            { title: "Preparatoria", person: "Mtra. Rosana Mora", color: "lightblue" }
           ]
         },
         {
-          title: "Coordinaciones Institucionales", color: "yellow",
+          title: "Coordinaciones", color: "yellow",
           children: [
             { title: "Inglés", color: "lightblue" },
             { title: "Psicología", color: "lightblue" },
-            { title: "Educación Física", color: "lightblue" },
+            { title: "Deportes", color: "lightblue" },
             { title: "Extraescolares", color: "lightblue" },
-            { title: "Pastoral", color: "lightblue" },
-            { title: "Francés", color: "lightblue" }
+            { title: "Acad. Pastoral", color: "lightblue" },
+            { title: "Francés", color: "lightblue" },
+            { title: "Servicios Escolares", color: "lightblue" },
+            { title: "Innovación Educativa", person: "Maestro Pablo Adrian Rivera Juvenal Area: Ecosistemas digitales y nuevas tecnologias en educacion", color: "lightblue" }
           ]
-        },
-        { title: "Innovación Educativa", person: "P. Adrian Rivera Juvenal", color: "lightblue" },
-        { title: "Servicios Escolares", person: "Elizabeth Oceguera Palacios", color: "lightblue" }
+        }
       ]
     },
     {
-      title: "Área Jurídica", person: "Iván Vázquez", color: "navy",
-      children: [{ title: "Seguridad", person: "Julio César Jiménez Romero", color: "lightblue" }]
+      title: "Área Jurídica", person: "Lic. Iván Vázquez", color: "navy",
+      children: [] // Contratos y Seguridad inactivas (NO)
     },
     {
-      title: "Comunicación y Marketing Institucional", person: "María Teresa Romero", color: "navy",
+      title: "Comunicación y Marketing", person: "Lic. Ma. Teresa Romero", color: "navy",
       children: [
         { title: "Admisiones", color: "lightblue" },
-        { title: "Marketing MFRS", color: "lightblue" },
-        { title: "Redes Sociales", person: "Jimena González y David Aguirre", color: "lightblue" }
+        { title: "Marketing MFRs", color: "lightblue" },
+        { title: "Redes Sociales", person: "Miss Jimena González, Prof. David Aguirre", color: "lightblue" }
       ]
     },
     {
-      title: "Subdirección Administrativa", person: "Teresa de Jesús Feria", color: "navy",
+      title: "Subdirección Administrativa", person: "C.P. Teresa de Jesús Feria Reyna", color: "navy",
       children: [
         {
-          title: "Servicios Generales", person: "Juan Ruiz López", color: "yellow",
+          title: "Servicios Generales", person: "Juan Ruiz", color: "yellow",
           children: [
-            { title: "Mantenimiento y Limpieza", person: "Adrián Galindo / José Manuel Bernal", color: "lightblue" },
-            { title: "Jardinería", person: "Andrés Marcelino Rodriguez", color: "lightblue" }
+            { title: "Mantenimiento", color: "lightblue" },
+            { title: "Limpieza", color: "lightblue" },
+            { title: "Jardinería", color: "lightblue" }
           ]
         },
         {
-          title: "Compras", person: "Maria Elena Ibarra Alvarez", color: "yellow",
-          children: [{ title: "Atención a pedidos", person: "Juan Ruiz López", color: "lightblue" }]
+          title: "Compras", person: "Lic. Ma. Elena Ibarra", color: "yellow",
+          children: [] // Proveedores inactiva (NO)
         },
-        {
-          title: "Recursos Humanos", color: "yellow",
-          children: [{ title: "Relaciones Públicas", person: "Maria del Rosario Gonzaga Vera", color: "lightblue" }]
-        },
-        {
-          title: "Control Interno", color: "yellow",
-          children: [{ title: "Sistemas", person: "Alfredo Vázquez y Antonio Silva", color: "lightblue" }]
-        },
-        {
-          title: "Tesorería", person: "Maria del Socorro Hdez", color: "yellow",
-          children: [{ title: "Cajas", person: "Krishna Cuadros, Margarita Hernández", color: "lightblue" }]
-        }
+        { title: "Recursos Humanos", color: "lightblue" },
+        { title: "Control Interno", color: "lightblue" },
+        { title: "Relaciones Públicas", person: "Lic. Rosario Gonzaga", color: "lightblue" },
+        { title: "Sistemas", person: "Ing. Alfredo Vázquez, Ing. Antonio Silva", color: "lightblue" },
+        { title: "Cajas", person: "Miss Krishna Cuadros, Miss Margarita Hernández", color: "lightblue" }
       ]
     }
   ]
@@ -87,6 +81,12 @@ let orgData = JSON.parse(localStorage.getItem('org_juventud_data')) || DEFAULT_O
 
 // ===== LÓGICA CLOUDFLARE KV =====
 async function loadOrgDataFromCloud() {
+  if (!CLOUDFLARE_API_URL) {
+    console.log("Modo local: API de Cloudflare desconectada.");
+    refreshUI();
+    return;
+  }
+  
   try {
     const response = await fetch(CLOUDFLARE_API_URL);
     if (response.ok) {
@@ -105,6 +105,9 @@ async function saveOrgData() {
   if (!isAdmin) return;
   localStorage.setItem('org_juventud_data', JSON.stringify(orgData));
   refreshUI();
+  
+  if (!CLOUDFLARE_API_URL) return; // No intenta subir si no hay URL
+  
   try {
     await fetch(CLOUDFLARE_API_URL, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(orgData)
@@ -247,7 +250,7 @@ function addNode(id) {
   if (!node.children) node.children = [];
   node.children.push({
     title: title.trim(),
-    color: "lightblue" // El color por defecto para nuevos nodos es el azul claro
+    color: "lightblue" 
   });
   
   saveOrgData();
@@ -399,7 +402,7 @@ function calculatePath() {
 
 // ===== TREE INTERACTIONS =====
 function toggleNode(element, event) { 
-  if (event && event.target && event.target.closest('.node-actions')) return; // No colapsar si se da clic en un botón de acción
+  if (event && event.target && event.target.closest('.node-actions')) return; 
   element.closest('.node-item').classList.toggle('collapsed'); 
 }
 function expandAll() { document.querySelectorAll('.node-item').forEach(i => i.classList.remove('collapsed')); }
@@ -462,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if(adminBtn) adminBtn.addEventListener('click', () => {
     const pass = document.getElementById('admin-pass-input').value;
-    if (pass === "psique33") { // Usamos la misma clave del proyecto anterior
+    if (pass === "psique33") { 
       isAdmin = true;
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('settings-btn').classList.remove('hidden');
@@ -499,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if(resetBtn) resetBtn.addEventListener('click', () => {
-    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica? Se perderán los datos en la nube de Cloudflare.")) {
+    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica?")) {
       localStorage.removeItem('org_juventud_data');
       orgData = JSON.parse(JSON.stringify(DEFAULT_ORG_DATA));
       saveOrgData();
@@ -507,6 +510,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Arrancar vista inicial tras cargar el DOM (Aún sin login, en segundo plano)
   refreshUI();
 });
