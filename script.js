@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if(adminBtn) adminBtn.addEventListener('click', () => {
     const pass = document.getElementById('admin-pass-input').value;
-    if (pass === "psique33") { 
+    if (pass === "vilaseca") { 
       isAdmin = true;
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('settings-btn').classList.remove('hidden');
