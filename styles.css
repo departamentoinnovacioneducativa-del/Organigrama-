@@ -190,7 +190,7 @@ body.dark-mode .control-btn.dark { border-color: var(--yellow); color: var(--yel
 .map-card-person { font-size: 10px; margin-top: 4px; opacity: 0.9; }
 @media (min-width: 768px) { .map-card-person { font-size: 11px; } }
 
-/* Líneas conectoras de los mapas (ahora más visibles) */
+/* Líneas conectoras de los mapas */
 .map-vertical .map-node-wrapper::before { content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 12px; background: var(--line); z-index: 1; }
 @media (min-width: 768px) { .map-vertical .map-node-wrapper::before { height: 20px; } }
 .map-vertical .map-node-wrapper:first-child::before { display: none; }
@@ -226,7 +226,7 @@ body.dark-mode .control-btn.dark { border-color: var(--yellow); color: var(--yel
 @media (min-width: 768px) { .legend-color { width: 22px; height: 22px; } }
 .footer { text-align: center; padding: 24px 16px; color: var(--text-color); font-size: 12px; border-top: 1px solid var(--panel-border); margin-top: 24px; opacity: 0.7; }
 
-/* ===== PRINT (Hoja Tamaño Carta / Letter) ===== */
+/* ===== PRINT ===== */
 @page {
   size: letter landscape; 
   margin: 8mm;
@@ -255,37 +255,58 @@ body.dark-mode .control-btn.dark { border-color: var(--yellow); color: var(--yel
   body.dark-mode .map-container { background-image: none !important; }
   
   .map-container, .org-tree {
-    overflow: visible !important;
-    border: none !important;
-    background: white !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    display: block !important;
+    overflow: visible !important; border: none !important; background: white !important;
+    padding: 0 !important; margin: 0 !important; width: 100% !important;
+    height: auto !important; display: block !important;
   }
   
-  .map-vertical {
-    zoom: 0.75; 
-    margin: 0 auto;
-    padding: 0 !important;
-  }
-  
-  .map-horizontal {
-    zoom: 0.6;
-    transform-origin: top left;
-    margin: 0 auto;
-    padding: 0 !important;
-  }
-  
-  .node-item.collapsed > .children-list {
-    grid-template-rows: 1fr !important;
-  }
-  
-  .node-card, .map-card {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
-    break-inside: avoid;
-  }
-  
+  .map-vertical { zoom: 0.75; margin: 0 auto; padding: 0 !important; }
+  .map-horizontal { zoom: 0.6; transform-origin: top left; margin: 0 auto; padding: 0 !important; }
+  .node-item.collapsed > .children-list { grid-template-rows: 1fr !important; }
+  .node-card, .map-card { box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important; break-inside: avoid; }
   ::-webkit-scrollbar { display: none; }
 }
+
+/* ===== MODALS & GATEKEEPER ===== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999; animation: fadeIn 0.3s ease;
+}
+.modal-overlay.hidden { display: none !important; }
+.auth-card {
+  background: var(--bg-color); border-radius: 16px; padding: 30px;
+  width: 90%; max-width: 400px; text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3); border-top: 6px solid var(--navy);
+  position: relative;
+}
+body.dark-mode .auth-card { border-top-color: var(--green); }
+
+.control-btn.navy { border-color: var(--navy); background: var(--navy); color: white; }
+.control-btn.navy:hover { background: #021a3e; }
+.control-btn.danger { border-color: #dc2626; color: #dc2626; }
+.control-btn.danger:hover { background: #dc2626; color: white; }
+
+/* ===== BOTONES EDICIÓN IN-NODE ===== */
+.node-actions {
+  display: flex; justify-content: center; gap: 8px; margin-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;
+}
+.node-yellow .node-actions { border-top-color: rgba(3, 42, 96, 0.2); }
+.node-btn {
+  background: rgba(255,255,255,0.2); border: none; border-radius: 4px;
+  width: 24px; height: 24px; display: flex; justify-content: center; align-items: center;
+  cursor: pointer; font-size: 11px; color: inherit; transition: all 0.2s;
+}
+.node-yellow .node-btn { background: rgba(3, 42, 96, 0.1); color: var(--navy); }
+.node-btn:hover { background: rgba(255,255,255,0.5); transform: scale(1.15); }
+.node-yellow .node-btn:hover { background: rgba(3, 42, 96, 0.3); }
+
+/* Para Mapas Vertical/Horizontal */
+.map-actions {
+  display: flex; justify-content: center; gap: 5px; margin-top: 6px;
+  padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.2);
+}
+.node-yellow .map-actions { border-top-color: rgba(3, 42, 96, 0.2); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
