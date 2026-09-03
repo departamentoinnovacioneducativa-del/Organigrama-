@@ -1,4 +1,4 @@
-const CACHE_NAME = 'org-juventud-v1.0.3'; 
+const CACHE_NAME = 'org-juventud-v1.0.4'; 
 
 // Archivos esenciales para que funcione sin internet
 const urlsToCache = [
