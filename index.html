@@ -24,6 +24,45 @@
 </head>
 <body>
 
+<!-- PANTALLA DE ACCESO INICIAL (GATEKEEPER) -->
+<div id="auth-screen" class="modal-overlay">
+  <div class="auth-card">
+    <img src="chema1.png" alt="Juventud" class="auth-logo mx-auto mb-4 h-16 object-contain" onerror="this.style.display='none'">
+    <h2 class="title-font text-2xl font-bold text-[#032A60] uppercase tracking-wider mb-1">Instituto Juventud</h2>
+    <p class="text-xs font-bold text-[#009944] uppercase tracking-widest mb-6">Acceso al Organigrama</p>
+    
+    <div class="flex flex-col gap-4">
+      <button id="btn-guest-login" class="control-btn dark w-full py-3"><i class="fas fa-user"></i> Entrar como Invitado</button>
+      
+      <div class="text-[10px] text-gray-500 uppercase tracking-widest my-1 border-b border-gray-200 pb-2">O Acceso Administrativo</div>
+      
+      <div class="flex flex-col gap-2">
+        <input type="password" id="admin-pass-input" class="w-full p-3 border-2 border-gray-300 rounded-lg text-sm text-center focus:outline-none focus:border-[#032A60]" placeholder="Contraseña de edición">
+        <button id="btn-admin-login" class="control-btn navy w-full py-3"><i class="fas fa-lock-open"></i> Acceso Administrador</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE AJUSTES GLOBALES -->
+<div id="settings-modal" class="modal-overlay hidden">
+  <div class="auth-card relative">
+    <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+    <h2 class="title-font text-2xl font-bold text-[#032A60] uppercase tracking-wider mb-1"><i class="fas fa-cog"></i> Ajustes</h2>
+    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Gestión de datos y respaldos</p>
+
+    <div class="flex flex-col gap-3">
+      <button id="btn-export-json" class="control-btn green w-full"><i class="fas fa-download"></i> Exportar Respaldo (JSON)</button>
+      <button id="btn-import-json" class="control-btn yellow w-full"><i class="fas fa-upload"></i> Importar Respaldo (JSON)</button>
+      <input type="file" id="import-file-input" accept=".json" style="display: none;">
+      
+      <div class="my-2 border-b border-gray-200"></div>
+      
+      <button id="btn-reset-org" class="control-btn danger w-full"><i class="fas fa-undo"></i> Restaurar Original</button>
+    </div>
+  </div>
+</div>
+
 <header class="header-section">
   <div class="header-content">
     <img src="chema1.png" alt="Juventud" class="header-logo" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22><rect width=%22120%22 height=%22120%22 rx=%2212%22 fill=%22%23032A60%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.35em%22 fill=%22white%22 font-size=%2216%22 font-family=%22Arial%22 font-weight=%22bold%22>JUVENTUD</text></svg>'">
@@ -41,7 +80,7 @@
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-12">
+<main class="max-w-[1400px] mx-auto px-4 md:px-8 py-6 md:py-12">
 
   <div class="top-actions no-print">
     <div class="view-switcher">
@@ -50,9 +89,14 @@
       <button class="view-btn" onclick="switchView('map-h', event)"><i class="fas fa-stream"></i> <span>Mapa Horizontal</span></button>
       <button class="view-btn" onclick="switchView('workflow', event)"><i class="fas fa-route"></i> <span>Flujo</span></button>
     </div>
-    <button id="dark-mode-toggle" class="control-btn dark" onclick="toggleDarkMode()">
-      <i class="fas fa-moon"></i> <span id="dark-mode-text">Modo Oscuro</span>
-    </button>
+    <div class="flex gap-2">
+      <button id="settings-btn" class="control-btn dark hidden" onclick="document.getElementById('settings-modal').classList.remove('hidden')">
+        <i class="fas fa-cog"></i> <span class="hidden sm:inline">Ajustes</span>
+      </button>
+      <button id="dark-mode-toggle" class="control-btn dark" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i> <span id="dark-mode-text" class="hidden sm:inline">Modo Oscuro</span>
+      </button>
+    </div>
   </div>
 
   <div id="workflow-controls" style="display: none;" class="workflow-panel mb-8 no-print">
