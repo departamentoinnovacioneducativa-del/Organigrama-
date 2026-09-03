@@ -20,6 +20,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- LIBRERÍA D3.JS PARA ÁRBOL VECTORIAL -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -33,9 +35,7 @@
     
     <div class="flex flex-col gap-4">
       <button id="btn-guest-login" class="control-btn dark w-full py-3"><i class="fas fa-user"></i> Entrar como Invitado</button>
-      
       <div class="text-[10px] text-gray-500 uppercase tracking-widest my-1 border-b border-gray-200 pb-2">O Acceso Administrativo</div>
-      
       <div class="flex flex-col gap-2">
         <input type="password" id="admin-pass-input" class="w-full p-3 border-2 border-gray-300 rounded-lg text-sm text-center focus:outline-none focus:border-[#032A60]" placeholder="Contraseña de edición">
         <button id="btn-admin-login" class="control-btn navy w-full py-3"><i class="fas fa-lock-open"></i> Acceso Administrador</button>
@@ -50,14 +50,11 @@
     <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
     <h2 class="title-font text-2xl font-bold text-[#032A60] uppercase tracking-wider mb-1"><i class="fas fa-cog"></i> Ajustes</h2>
     <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Gestión de datos y respaldos</p>
-
     <div class="flex flex-col gap-3">
       <button id="btn-export-json" class="control-btn green w-full"><i class="fas fa-download"></i> Exportar Respaldo (JSON)</button>
       <button id="btn-import-json" class="control-btn yellow w-full"><i class="fas fa-upload"></i> Importar Respaldo (JSON)</button>
       <input type="file" id="import-file-input" accept=".json" style="display: none;">
-      
       <div class="my-2 border-b border-gray-200"></div>
-      
       <button id="btn-reset-org" class="control-btn danger w-full"><i class="fas fa-undo"></i> Restaurar Original</button>
     </div>
   </div>
@@ -101,7 +98,7 @@
 
   <div id="workflow-controls" style="display: none;" class="workflow-panel mb-8 no-print">
     <h3 class="title-font text-lg sm:text-xl font-bold mb-4 uppercase tracking-wider flex items-center">
-      <i class="fas fa-exchange-alt mr-2"></i>Configuración de Flujo de Información
+      <i class="fas fa-exchange-alt mr-2"></i>Configuración de Flujo
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div>
