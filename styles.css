@@ -154,7 +154,9 @@ body.dark-mode .control-btn.dark { border-color: var(--yellow); color: var(--yel
 .children-list-inner { overflow: hidden; padding-top: 14px; }
 .node-item.collapsed > .children-list { grid-template-rows: 0fr; }
 .children-list .node-item { margin-top: 14px; position: relative; }
-.children-list .node-item::before { content: ''; position: absolute; left: -22px; top: 30px; width: 22px; height: 2px; background: var(--line); }
+
+/* REPARACIÓN DE LÍNEAS HORIZONTALES (Ajustadas a top: 48px por los botones) */
+.children-list .node-item::before { content: ''; position: absolute; left: -22px; top: 48px; width: 22px; height: 2px; background: var(--line); }
 @media (min-width: 640px) { .children-list .node-item::before { left: -30px; width: 30px; } }
 .children-list .node-item:first-child { margin-top: 0; }
 
