@@ -109,9 +109,9 @@ function assignIds(node, parent = null) {
 }
 
 // ==========================================
-// ===== D3.JS: LÍNEAS VECTORIALES ORTOGONALES 
+// ===== D3.JS: ÁRBOL ORTOGONAL (VERTICAL Y HORIZONTAL) 
 // ==========================================
-function renderD3Tree() {
+function renderD3Tree(orientation = 'vertical') {
   const container = document.getElementById('view-container');
   container.innerHTML = ''; 
   
@@ -121,6 +121,7 @@ function renderD3Tree() {
   }
 
   const width = container.clientWidth || 1000;
+  const height = 650;
   
   const svg = d3.select('#view-container').append('svg')
       .attr('width', '100%').attr('height', '75vh')
@@ -132,11 +133,13 @@ function renderD3Tree() {
 
   const root = d3.hierarchy(orgData, d => d.children);
   
-  // Separación inteligente de nodos (300 de ancho, 250 de alto) para que NUNCA se toquen.
-  const treeLayout = d3.tree().nodeSize([300, 250]);
+  // Tamaño de separación entre nodos dependiendo de la orientación
+  const treeLayout = d3.tree().nodeSize(
+      orientation === 'horizontal' ? [180, 350] : [300, 250]
+  );
   treeLayout(root);
 
-  // Generador de rutas ORTOGONALES perfectas
+  // Creador de líneas (Links) con ángulos de 90 grados
   g.append("g").attr("class", "links")
       .selectAll(".link").data(root.links()).join("path")
       .attr("class", "link")
@@ -144,35 +147,48 @@ function renderD3Tree() {
       .attr("stroke", "var(--line)")
       .attr("stroke-width", "3px")
       .attr("d", d => {
-          const startX = d.source.x;
-          const startY = d.source.y + 110; // Sale exactamente del borde inferior del nodo padre
-          const endX = d.target.x;
-          const endY = d.target.y - 15;    // Llega exactamente al borde superior del nodo hijo
-          const midY = (startY + endY) / 2; // El ángulo se forma justo a la mitad
-          return `M${startX},${startY} V${midY} H${endX} V${endY}`;
+          if (orientation === 'horizontal') {
+              const startX = d.source.y + 130;
+              const startY = d.source.x;
+              const endX = d.target.y - 130;
+              const endY = d.target.x;
+              const midX = (startX + endX) / 2;
+              return `M${startX},${startY} H${midX} V${endY} H${endX}`;
+          } else {
+              const startX = d.source.x;
+              const startY = d.source.y + 110;
+              const endX = d.target.x;
+              const endY = d.target.y - 50; 
+              const midY = (startY + endY) / 2;
+              return `M${startX},${startY} V${midY} H${endX} V${endY}`;
+          }
       });
 
   const nodeGroup = g.append("g").attr("class", "nodes")
       .selectAll(".node").data(root.descendants()).join("g")
       .attr("class", "node")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
+      .attr("transform", d => orientation === 'horizontal' ? `translate(${d.y},${d.x})` : `translate(${d.x},${d.y})`);
 
   nodeGroup.append("foreignObject")
-      .attr("x", -130).attr("y", -20)
-      .attr("width", 260).attr("height", 240) // Caja suficientemente grande para los botones
+      .attr("x", -130).attr("y", -50)
+      .attr("width", 260).attr("height", 240)
       .style("overflow", "visible")
       .append("xhtml:div")
-      .html(d => generateCardHTML(d.data));
+      .html(d => generateCardHTML(d.data, orientation));
 
-  // Centrar la vista en el director
-  svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, 80).scale(0.85));
+  // Posicionar la cámara (zoom inicial) según la vista
+  if (orientation === 'horizontal') {
+      svg.call(zoom.transform, d3.zoomIdentity.translate(150, height / 2).scale(0.85));
+  } else {
+      svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, 80).scale(0.85));
+  }
 }
 
-function generateCardHTML(data) {
+function generateCardHTML(data, orientation) {
   const hasChildren = (data.children && data.children.length > 0) || (data._children && data._children.length > 0);
   const isCollapsed = !data.children && data._children;
   
-  let html = `<div class="node-card node-${data.color}" style="margin: 0; width: 100%;">`;
+  let html = `<div class="node-card node-${data.color}" data-id="${data.id}" style="margin: 0; width: 100%;">`;
   
   html += `<div class="node-content text-center w-full"><div class="node-title">${data.title}</div>`;
   if (data.person) html += `<div class="node-person">${data.person}</div>`;
@@ -185,9 +201,14 @@ function generateCardHTML(data) {
     </div>`;
   }
   
+  // Botón expandir adaptado (abajo para vertical, a la derecha para horizontal)
   if (hasChildren) {
     const icon = isCollapsed ? 'fa-plus' : 'fa-minus';
-    html += `<div onclick="toggleD3Node(${data.id})" style="position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); cursor: pointer; background: var(--navy); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white;"><i class="fas ${icon}"></i></div>`;
+    const btnPosition = orientation === 'horizontal'
+        ? `right: -14px; top: 50%; transform: translateY(-50%);`
+        : `bottom: -14px; left: 50%; transform: translateX(-50%);`;
+        
+    html += `<div onclick="toggleD3Node(${data.id})" style="position: absolute; ${btnPosition} cursor: pointer; background: var(--navy); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white;"><i class="fas ${icon}"></i></div>`;
   }
   
   html += `</div></div>`;
@@ -210,32 +231,6 @@ function traverseAndExpand(n) {
 function collapseAll() { if(orgData.children) orgData.children.forEach(traverseAndCollapse); saveOrgData(); }
 function traverseAndCollapse(n) {
   if (n.children) { n._children = n.children; delete n.children; n._children.forEach(traverseAndCollapse); }
-}
-
-// ===== RENDERING: MAPS CLÁSICOS =====
-function renderMap(node, orientation = 'vertical') {
-  const childrenList = node.children || node._children;
-  const hasChildren = childrenList && childrenList.length > 0;
-  
-  let html = `<div class="map-node-wrapper"><div class="map-card node-${node.color}" data-id="${node.id}">`;
-  html += `<div class="map-card-title">${node.title}</div>`;
-  if (node.person) html += `<div class="map-card-person">${node.person}</div>`;
-  
-  if (isAdmin) {
-    html += `<div class="map-actions" onclick="event.stopPropagation()">
-      <button class="node-btn" onclick="editNode(${node.id})"><i class="fas fa-pen"></i></button>
-      <button class="node-btn" onclick="addNode(${node.id})"><i class="fas fa-plus"></i></button>
-      <button class="node-btn" onclick="deleteNode(${node.id})"><i class="fas fa-trash"></i></button>
-    </div>`;
-  }
-  html += `</div>`;
-  
-  if (hasChildren) {
-    html += `<div class="map-children-row">`;
-    childrenList.forEach(c => html += renderMap(c, orientation));
-    html += `</div>`;
-  }
-  return html + `</div>`;
 }
 
 // ===== FUNCIONES DE EDICIÓN =====
@@ -306,27 +301,22 @@ function switchView(view, event) {
   if(!container) return;
 
   controlsBar.style.display = 'none'; wfControls.style.display = 'none';
-  container.className = ''; container.classList.remove('workflow-mode');
+  container.className = 'org-tree'; container.classList.remove('workflow-mode');
   
   if (view === 'tree') {
     controlsBar.style.display = 'flex';
-    container.className = 'org-tree';
-    renderD3Tree();
-  } else if (view === 'map-v') {
-    container.className = 'map-container';
-    container.innerHTML = `<div class="map-vertical">${renderMap(orgData, 'vertical')}</div>`;
+    renderD3Tree('vertical');
   } else if (view === 'map-h') {
-    container.className = 'map-container';
-    container.innerHTML = `<div class="map-horizontal">${renderMap(orgData, 'horizontal')}</div>`;
+    renderD3Tree('horizontal');
   } else if (view === 'workflow') {
     wfControls.style.display = 'block';
-    container.className = 'map-container workflow-mode';
-    container.innerHTML = `<div class="map-vertical">${renderMap(orgData, 'vertical')}</div>`;
+    container.classList.add('workflow-mode');
+    renderD3Tree('horizontal'); // Flujo luce mejor en modo horizontal
     populateDropdowns();
   }
 }
 
-// ===== WORKFLOW PATHFINDING =====
+// ===== WORKFLOW PATHFINDING (Actualizado para las tarjetas D3) =====
 function populateDropdowns() {
   const emisorSel = document.getElementById('emisor-select');
   const receptorSel = document.getElementById('receptor-select');
@@ -342,24 +332,30 @@ function populateDropdowns() {
   });
   if(emisorSel.options.length > 1) { emisorSel.selectedIndex = 0; receptorSel.selectedIndex = 5; }
 }
+
 function getAncestors(id) {
   const path = []; let current = nodesMap[id];
   while (current) { path.push(current.id); current = current.parentId !== null ? nodesMap[current.parentId] : null; }
   return path;
 }
+
 function calculatePath() {
   const startId = parseInt(document.getElementById('emisor-select').value);
   const endId = parseInt(document.getElementById('receptor-select').value);
-  document.querySelectorAll('.map-card').forEach(c => {
+  
+  document.querySelectorAll('.node-card').forEach(c => {
     c.classList.remove('path-active', 'path-start', 'path-end');
     const num = c.querySelector('.path-number'); if (num) num.remove();
   });
+  
   const summaryDiv = document.getElementById('workflow-summary');
   if (startId === endId) {
     summaryDiv.style.display = 'block'; summaryDiv.innerHTML = `<p class="font-bold text-red-600">Emisor y receptor son la misma área.</p>`; return;
   }
+  
   const pathStart = getAncestors(startId); const pathEnd = getAncestors(endId);
   const setEnd = new Set(pathEnd); const lcaId = pathStart.find(id => setEnd.has(id));
+  
   const route = [];
   for (let id of pathStart) { route.push(id); if (id === lcaId) break; }
   const downPath = [];
@@ -367,7 +363,7 @@ function calculatePath() {
   downPath.reverse(); route.push(...downPath);
   
   route.forEach((id, index) => {
-    const el = document.querySelector(`.map-card[data-id="${id}"]`);
+    const el = document.querySelector(`.node-card[data-id="${id}"]`);
     if (el) {
       el.classList.add('path-active');
       if (id === startId) el.classList.add('path-start');
@@ -377,6 +373,7 @@ function calculatePath() {
       el.appendChild(num);
     }
   });
+  
   const instances = route.length; const steps = instances - 1;
   let routeHtml = route.map((id, i) => {
     const node = nodesMap[id]; let label = node.title;
@@ -384,6 +381,7 @@ function calculatePath() {
     if (id === endId) label = `<strong style="color:#032A60;">⬇ ${label}</strong>`;
     return `<div class="path-step">${i+1}. ${label}</div>${i < route.length-1 ? '<i class="fas fa-arrow-right path-arrow"></i>' : ''}`;
   }).join('');
+  
   summaryDiv.style.display = 'block';
   summaryDiv.innerHTML = `
     <h4 class="title-font font-bold uppercase text-base sm:text-lg mb-2">Ruta Calculada</h4>
@@ -395,7 +393,7 @@ function calculatePath() {
   `;
 }
 
-// ===== DARK MODE Y EVENTOS ======
+// ===== EVENTOS Y DARK MODE ======
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDarkMode = document.body.classList.contains('dark-mode');
@@ -426,18 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const importFile = document.getElementById('import-file-input');
   
   if(guestBtn) guestBtn.addEventListener('click', () => {
-    isAdmin = false;
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('settings-btn').classList.add('hidden');
+    isAdmin = false; document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('settings-btn').classList.add('hidden');
     loadOrgDataFromCloud();
   });
 
   if(adminBtn) adminBtn.addEventListener('click', () => {
-    const pass = document.getElementById('admin-pass-input').value;
-    if (pass === "vilaseca") { 
-      isAdmin = true;
-      document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('settings-btn').classList.remove('hidden');
+    if (document.getElementById('admin-pass-input').value === "psique33") { 
+      isAdmin = true; document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('settings-btn').classList.remove('hidden');
       loadOrgDataFromCloud();
     } else alert("Contraseña incorrecta. Intenta de nuevo.");
   });
@@ -455,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(evt) {
-        try { orgData = JSON.parse(evt.target.result); saveOrgData(); document.getElementById('settings-modal').classList.add('hidden'); alert("Organigrama restaurado con éxito."); } 
+        try { orgData = JSON.parse(evt.target.result); saveOrgData(); document.getElementById('settings-modal').classList.add('hidden'); alert("Restaurado con éxito."); } 
         catch (err) { alert("Error: Archivo JSON no válido."); }
       };
       reader.readAsText(file);
@@ -463,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if(resetBtn) resetBtn.addEventListener('click', () => {
-    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica? Se perderán los datos en la nube de Cloudflare.")) {
+    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica? Se perderán los datos en la nube.")) {
       localStorage.removeItem('org_juventud_data'); orgData = JSON.parse(JSON.stringify(DEFAULT_ORG_DATA));
       saveOrgData(); document.getElementById('settings-modal').classList.add('hidden');
     }
