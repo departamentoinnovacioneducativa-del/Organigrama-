@@ -29,7 +29,7 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg-color); color: v
 /* ===== CONTROLES Y SWITCHER ===== */
 .top-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 @media (min-width: 768px) { .top-actions { flex-direction: row; justify-content: center; align-items: center; margin-bottom: 24px; } }
-.view-switcher { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; background: var(--switch-bg); padding: 6px; border-radius: 12px; border: 1px solid var(--panel-border); }
+.view-switcher { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--switch-bg); padding: 6px; border-radius: 12px; border: 1px solid var(--panel-border); }
 @media (min-width: 640px) { .view-switcher { display: flex; flex-wrap: wrap; justify-content: center; } }
 .view-btn { padding: 10px 12px; border: none; background: transparent; color: #64748b; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; font-size: 11px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; }
 .view-btn:hover { color: var(--navy); background: rgba(255,255,255,0.5); }
@@ -50,6 +50,7 @@ body.dark-mode .view-btn.active { background: var(--light-blue); color: #fff; }
 body.dark-mode .control-btn { background: var(--panel-bg); border-color: #94a3b8; color: #e2e8f0; }
 
 /* ===== TARJETAS Y NODOS ===== */
+.org-tree { padding: 16px 0; }
 .node-card { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; height: 100%; transition: all 0.25s ease; }
 .node-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 .node-green { background: var(--green); color: white; }
@@ -68,35 +69,16 @@ body.dark-mode .control-btn { background: var(--panel-bg); border-color: #94a3b8
 .node-yellow .node-btn { background: rgba(3, 42, 96, 0.1); color: var(--navy); }
 .node-btn:hover { background: rgba(255,255,255,0.5); transform: scale(1.15); }
 
-/* ===== MAPS ===== */
-.map-container { overflow: auto; padding: 20px 10px; border: 1px solid var(--panel-border); border-radius: 16px; background: var(--panel-bg); min-height: 50vh; position: relative; background-image: radial-gradient(var(--panel-border) 1px, transparent 1px); background-size: 20px 20px; }
-.map-vertical { display: flex; flex-direction: column; align-items: center; min-width: fit-content; }
-.map-horizontal { display: flex; flex-direction: row; align-items: center; min-height: fit-content; justify-content: center; min-width: fit-content; }
-.map-node-wrapper { display: flex; flex-direction: column; align-items: center; position: relative; padding: 16px 8px; }
-.map-horizontal .map-node-wrapper { flex-direction: row; align-items: center; }
-.map-children-row { display: flex; flex-direction: row; justify-content: center; gap: 0; position: relative; }
-.map-horizontal .map-children-row { flex-direction: column; gap: 0; align-items: flex-start; }
-
-.map-card { padding: 12px 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; min-width: 160px; max-width: 220px; z-index: 2; position: relative; transition: all 0.3s ease; }
-.map-card-title { font-weight: 700; font-size: 12px; text-transform: uppercase; line-height: 1.3; }
-.map-card-person { font-size: 11px; margin-top: 4px; opacity: 0.9; }
-
-.map-vertical .map-node-wrapper::before { content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 16px; background: var(--line); z-index: 1; transform: translateX(-50%); }
-.map-vertical .map-node-wrapper:first-child::before { display: none; }
-.map-vertical .map-children-row::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: var(--line); }
-.map-horizontal .map-node-wrapper::before { content: ''; position: absolute; left: 0; top: 50%; width: 16px; height: 2px; background: var(--line); z-index: 1; transform: translateY(-50%); }
-.map-horizontal .map-node-wrapper:first-child::before { display: none; }
-.map-horizontal .map-children-row::before { content: ''; position: absolute; left: 0; top: 10%; bottom: 10%; width: 2px; background: var(--line); }
-.map-actions { display: flex; justify-content: center; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2); }
-.node-yellow .map-actions { border-top-color: rgba(3, 42, 96, 0.2); }
-
-/* ===== WORKFLOW ===== */
+/* ===== WORKFLOW (ILUMINACIÓN DE RUTAS) ===== */
 .workflow-panel { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
 .workflow-select { width: 100%; padding: 12px 16px; border: 2px solid var(--navy); border-radius: 8px; background: var(--bg-color); font-weight: 600; color: var(--text-color); cursor: pointer; font-size: 14px; }
 .workflow-summary { margin-top: 20px; padding: 20px; background: var(--bg-color); border-radius: 12px; border-left: 6px solid var(--green); display: none; }
 .path-step { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--switch-bg); border-radius: 20px; font-weight: 700; font-size: 12px; border: 1px solid var(--panel-border); }
-.workflow-mode .map-card { opacity: 0.25; filter: grayscale(80%); }
-.workflow-mode .map-card.path-active { opacity: 1; filter: none; border-color: var(--yellow); box-shadow: 0 0 15px rgba(255, 209, 0, 0.6); }
+
+/* Efecto de ruta activa sobre tarjetas D3 */
+.workflow-mode .node-card { opacity: 0.25; filter: grayscale(80%); }
+.workflow-mode .node-card.path-active { opacity: 1; filter: none; border-color: var(--yellow); box-shadow: 0 0 15px rgba(255, 209, 0, 0.6); }
+.path-number { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; background: var(--navy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border: 2px solid white; z-index: 10; }
 
 /* ===== MODALS & GATEKEEPER ===== */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9999; }
