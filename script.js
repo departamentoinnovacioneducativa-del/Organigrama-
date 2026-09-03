@@ -71,7 +71,7 @@ const DEFAULT_ORG_DATA = {
 // Variable Global de Datos
 let orgData = JSON.parse(localStorage.getItem('org_juventud_data')) || DEFAULT_ORG_DATA;
 
-// ===== LÓGICA CLOUDFLARE KV =====
+// ===== LÓGICA CLOUDFLARE KV (Con Sincronización Inmediata) =====
 async function loadOrgDataFromCloud() {
   if (!CLOUDFLARE_API_URL) return refreshUI();
   try {
@@ -100,109 +100,46 @@ function refreshUI() {
   assignIds(orgData);
   const activeBtn = document.querySelector('.view-btn.active');
   const view = activeBtn ? (activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] || 'tree') : 'tree';
-  switchView(view);
+  switchView(view, { currentTarget: activeBtn || document.querySelector('.view-btn') });
 }
 
 function assignIds(node, parent = null) {
   node.id = nodeIdCounter++; node.parentId = parent ? parent.id : null;
   nodesMap[node.id] = node;
   if (node.children) node.children.forEach(c => assignIds(c, node));
-  if (node._children) node._children.forEach(c => assignIds(c, node));
 }
 
-// ==========================================
-// ===== MOTOR D3.JS (ÁRBOL VECTORIAL) ======
-// ==========================================
-function renderD3Tree() {
-  const container = document.getElementById('view-container');
-  container.innerHTML = ''; 
+// ===== RENDERING: TREE DOM ORIGINAL (REPARADO) =====
+function renderTree(node, isRoot = false) {
+  const hasChildren = node.children && node.children.length > 0;
+  const wrapperClass = isRoot ? 'node-item root-node' : 'node-item';
+  let html = `<div class="${wrapperClass}">`;
   
-  if (typeof d3 === 'undefined') {
-    container.innerHTML = `<p class="text-center text-red-500 font-bold p-10">D3.js no cargó. Verifica tu conexión o el HTML.</p>`;
-    return;
-  }
-
-  const width = container.clientWidth || 1000;
-  const svg = d3.select('#view-container').append('svg')
-      .attr('width', '100%').attr('height', '75vh')
-      .style('background', 'transparent').style('cursor', 'grab');
-
-  const g = svg.append('g');
-
-  const zoom = d3.zoom().scaleExtent([0.1, 3]).on('zoom', e => g.attr('transform', e.transform));
-  svg.call(zoom);
-
-  const root = d3.hierarchy(orgData, d => d.children);
-  const treeLayout = d3.tree().nodeSize([300, 200]); // Separación entre nodos para evitar choques
-  treeLayout(root);
-
-  g.append("g").attr("class", "links")
-      .selectAll(".link").data(root.links()).join("path")
-      .attr("class", "link").attr("fill", "none")
-      .attr("stroke", "var(--line)").attr("stroke-width", "2px")
-      .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
-
-  const nodeGroup = g.append("g").attr("class", "nodes")
-      .selectAll(".node").data(root.descendants()).join("g")
-      .attr("class", "node").attr("transform", d => `translate(${d.x},${d.y})`);
-
-  nodeGroup.append("foreignObject")
-      .attr("x", -130).attr("y", -50)
-      .attr("width", 260).attr("height", 200)
-      .style("overflow", "visible")
-      .append("xhtml:div")
-      .html(d => generateCardHTML(d.data));
-
-  svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, 80).scale(0.8));
-}
-
-function generateCardHTML(data) {
-  const hasChildren = (data.children && data.children.length > 0) || (data._children && data._children.length > 0);
-  const isCollapsed = !data.children && data._children;
-  
-  let html = `<div class="node-card node-${data.color}">`;
-  
-  if (hasChildren) {
-    const icon = isCollapsed ? 'fa-chevron-right' : 'fa-chevron-down';
-    html += `<div onclick="toggleD3Node(${data.id})" style="position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); cursor: pointer; background: var(--navy); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid white;"><i class="fas ${icon}"></i></div>`;
-  }
-  
-  html += `<div class="node-content text-center w-full"><div class="node-title">${data.title}</div>`;
-  if (data.person) html += `<div class="node-person">${data.person}</div>`;
+  html += `<div class="node-card node-${node.color}" ${hasChildren ? 'onclick="toggleNode(this, event)"' : ''}>`;
+  html += hasChildren ? `<div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>` : `<div class="leaf-icon"><i class="fas fa-circle"></i></div>`;
+  html += `<div class="node-content"><div class="node-title">${node.title}</div>`;
+  if (node.person) html += `<div class="node-person">${node.person}</div>`;
   
   if (isAdmin) {
     html += `<div class="node-actions" onclick="event.stopPropagation()">
-      <button class="node-btn" title="Editar" onclick="editNode(${data.id})"><i class="fas fa-pen"></i></button>
-      <button class="node-btn" title="Añadir" onclick="addNode(${data.id})"><i class="fas fa-plus"></i></button>
-      <button class="node-btn" title="Eliminar" onclick="deleteNode(${data.id})"><i class="fas fa-trash"></i></button>
+      <button class="node-btn" title="Editar" onclick="editNode(${node.id})"><i class="fas fa-pen"></i></button>
+      <button class="node-btn" title="Añadir" onclick="addNode(${node.id})"><i class="fas fa-plus"></i></button>
+      <button class="node-btn" title="Eliminar" onclick="deleteNode(${node.id})"><i class="fas fa-trash"></i></button>
     </div>`;
   }
   html += `</div></div>`;
-  return html;
+  
+  if (hasChildren) {
+    html += `<div class="children-list"><div class="children-list-inner">`;
+    node.children.forEach(c => html += renderTree(c));
+    html += `</div></div>`;
+  }
+  return html + `</div>`;
 }
 
-function toggleD3Node(id) {
-  const node = findNodeObj(orgData, id);
-  if (!node) return;
-  if (node.children) { node._children = node.children; delete node.children; } 
-  else if (node._children) { node.children = node._children; delete node._children; }
-  saveOrgData(); 
-}
-
-function traverseAndExpand(n) {
-  if (n._children) { n.children = n._children; delete n._children; }
-  if (n.children) n.children.forEach(traverseAndExpand);
-}
-function traverseAndCollapse(n) {
-  if (n.children) { n._children = n.children; delete n.children; n._children.forEach(traverseAndCollapse); }
-}
-function expandAll() { traverseAndExpand(orgData); saveOrgData(); }
-function collapseAll() { if(orgData.children) orgData.children.forEach(traverseAndCollapse); saveOrgData(); }
-
-// ===== RENDERING: MAPS (HTML/CSS Clásico) =====
+// ===== RENDERING: MAPS =====
 function renderMap(node, orientation = 'vertical') {
-  const childrenList = node.children || node._children;
-  const hasChildren = childrenList && childrenList.length > 0;
+  const hasChildren = node.children && node.children.length > 0;
   
   let html = `<div class="map-node-wrapper"><div class="map-card node-${node.color}" data-id="${node.id}">`;
   html += `<div class="map-card-title">${node.title}</div>`;
@@ -219,7 +156,7 @@ function renderMap(node, orientation = 'vertical') {
   
   if (hasChildren) {
     html += `<div class="map-children-row">`;
-    childrenList.forEach(c => html += renderMap(c, orientation));
+    node.children.forEach(c => html += renderMap(c, orientation));
     html += `</div>`;
   }
   return html + `</div>`;
@@ -228,9 +165,8 @@ function renderMap(node, orientation = 'vertical') {
 // ===== FUNCIONES DE EDICIÓN =====
 function findNodeObj(root, id) {
   if (root.id === id) return root;
-  const children = root.children || root._children;
-  if (children) {
-    for (let child of children) {
+  if (root.children) {
+    for (let child of root.children) {
       let found = findNodeObj(child, id);
       if (found) return found;
     }
@@ -240,9 +176,8 @@ function findNodeObj(root, id) {
 
 function findParentObj(root, id, parent = null) {
   if (root.id === id) return parent;
-  const children = root.children || root._children;
-  if (children) {
-    for (let child of children) {
+  if (root.children) {
+    for (let child of root.children) {
       let found = findParentObj(child, id, root);
       if (found) return found;
     }
@@ -275,9 +210,8 @@ function addNode(id) {
   const title = prompt("Escribe el nombre del nuevo cargo:");
   if (!title || title.trim() === "") return;
   
-  if (!node.children && !node._children) node.children = [];
-  const target = node.children ? node.children : node._children;
-  target.push({ title: title.trim(), color: "lightblue" });
+  if (!node.children) node.children = [];
+  node.children.push({ title: title.trim(), color: "lightblue" });
   saveOrgData();
 }
 
@@ -289,11 +223,9 @@ function deleteNode(id) {
   if (!confirm(`⚠️ ¿Eliminar "${node.title}" y sus dependientes?`)) return;
   
   const parent = findParentObj(orgData, id);
-  if (parent) {
-    if (parent.children) parent.children = parent.children.filter(c => c.id !== id);
-    if (parent._children) parent._children = parent._children.filter(c => c.id !== id);
-    if (parent.children && parent.children.length === 0) delete parent.children;
-    if (parent._children && parent._children.length === 0) delete parent._children;
+  if (parent && parent.children) {
+    parent.children = parent.children.filter(c => c.id !== id);
+    if (parent.children.length === 0) delete parent.children;
   }
   saveOrgData();
 }
@@ -319,7 +251,7 @@ function switchView(view, event) {
   if (view === 'tree') {
     controlsBar.style.display = 'flex';
     container.className = 'org-tree';
-    renderD3Tree();
+    container.innerHTML = renderTree(orgData, true);
   } else if (view === 'map-v') {
     container.className = 'map-container';
     container.innerHTML = `<div class="map-vertical">${renderMap(orgData, 'vertical')}</div>`;
@@ -414,6 +346,17 @@ function calculatePath() {
     </div>
     <div class="flex flex-wrap items-center mt-2 border-t pt-4">${routeHtml}</div>
   `;
+}
+
+// ===== TREE INTERACTIONS =====
+function toggleNode(element, event) { 
+  if (event && event.target && event.target.closest('.node-actions')) return; 
+  element.closest('.node-item').classList.toggle('collapsed'); 
+}
+function expandAll() { document.querySelectorAll('.node-item').forEach(i => i.classList.remove('collapsed')); }
+function collapseAll() {
+  const root = document.querySelector('.root-node');
+  if (root) root.querySelectorAll('.node-item').forEach(i => { if(!i.classList.contains('root-node')) i.classList.add('collapsed'); });
 }
 
 // ===== DARK MODE =====
