@@ -79,7 +79,7 @@ const DEFAULT_ORG_DATA = {
 // Variable Global de Datos
 let orgData = JSON.parse(localStorage.getItem('org_juventud_data')) || DEFAULT_ORG_DATA;
 
-// ===== LÓGICA CLOUDFLARE KV =====
+// ===== LÓGICA CLOUDFLARE KV (Con Cache-Busting) =====
 async function loadOrgDataFromCloud() {
   if (!CLOUDFLARE_API_URL) {
     console.log("Modo local: API de Cloudflare desconectada.");
@@ -88,7 +88,8 @@ async function loadOrgDataFromCloud() {
   }
   
   try {
-    const response = await fetch(CLOUDFLARE_API_URL);
+    // El ?t= y cache: no-store fuerzan a descargar siempre la versión más reciente sin importar el caché
+    const response = await fetch(`${CLOUDFLARE_API_URL}?t=${new Date().getTime()}`, { cache: "no-store" });
     if (response.ok) {
       const cloudData = await response.json();
       orgData = cloudData;
