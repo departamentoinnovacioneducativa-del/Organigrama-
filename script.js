@@ -1,5 +1,5 @@
 // ===== CONFIGURACIÓN CLOUDFLARE KV & ESTADO =====
-const CLOUDFLARE_API_URL = ""; // Vacío temporalmente para no cruzar datos con el otro proyecto
+const CLOUDFLARE_API_URL = "https://org-juventud-api.adrian-camelot32.workers.dev";
 let isAdmin = false;
 
 let nodesMap = {};
@@ -106,7 +106,7 @@ async function saveOrgData() {
   localStorage.setItem('org_juventud_data', JSON.stringify(orgData));
   refreshUI();
   
-  if (!CLOUDFLARE_API_URL) return; // No intenta subir si no hay URL
+  if (!CLOUDFLARE_API_URL) return;
   
   try {
     await fetch(CLOUDFLARE_API_URL, {
@@ -270,7 +270,6 @@ function deleteNode(id) {
   }
   saveOrgData();
 }
-
 
 // ===== VIEW SWITCHER =====
 function switchView(view, event) {
@@ -502,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if(resetBtn) resetBtn.addEventListener('click', () => {
-    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica?")) {
+    if (confirm("⚠️ ¿Restaurar el organigrama a la versión de fábrica? Se perderán los datos en la nube de Cloudflare.")) {
       localStorage.removeItem('org_juventud_data');
       orgData = JSON.parse(JSON.stringify(DEFAULT_ORG_DATA));
       saveOrgData();
